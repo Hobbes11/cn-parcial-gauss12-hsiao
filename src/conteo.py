@@ -40,3 +40,14 @@ def tabla_markdown(c, titulo):
           f"- Sobrecosto de estabilidad (pivoteo): {t['comparaciones']} comparaciones + {t['div_escala']} divisiones de escalado = {t['sobrecosto']} operaciones; "
           f"{t['intercambios']} intercambios de filas (movimiento de datos, no flops)", ""]
     return "\n".join(L)
+
+def comparar_con_cotas(c_sin, c_esc):
+    n = c_sin["n"]
+    ts, te = totales(c_sin), totales(c_esc)
+    cota, cota_piv, bajo_diag = 1486, 1486 + 66, n * (n - 1) // 2
+    medido_esc = te["nucleo"] + te["sobrecosto"]
+    return "\n".join(["## Comparación con las cotas del enunciado", "",
+        "| Estrategia | Medido (contador) | Cota enunciado | Diferencia |",
+        f"| Sin pivoteo (núcleo) | {ts['nucleo']} | {cota} | {100 * (ts['nucleo'] / cota - 1):+.1f} % |",
+        f"| Pivoteo escalado (núcleo + sobrecosto) | {medido_esc} | {cota_piv} | {100 * (medido_esc / cota_piv - 1):+.1f} % |",
+        f"| Referencia teórica 2n³/3 | {2 * n ** 3 // 3} | 2n³/3 | solo el orden dominante |"])
