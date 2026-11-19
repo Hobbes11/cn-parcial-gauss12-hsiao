@@ -3,6 +3,7 @@
 ### Sin pivoteo
 
 | Paso k | mult/div | sumas/restas | flops del paso | comparaciones (pivote) | divisiones de escalado | intercambios |
+|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 143 | 132 | 275 | 0 | 0 | 0 |
 | 2 | 120 | 110 | 230 | 0 | 0 | 0 |
 | 3 | 99 | 90 | 189 | 0 | 0 | 0 |
@@ -24,6 +25,7 @@
 ### Pivoteo parcial escalado
 
 | Paso k | mult/div | sumas/restas | flops del paso | comparaciones (pivote) | divisiones de escalado | intercambios |
+|---:|---:|---:|---:|---:|---:|---:|
 | 1 | 143 | 132 | 275 | 11 | 12 | 1 |
 | 2 | 120 | 110 | 230 | 10 | 11 | 0 |
 | 3 | 99 | 90 | 189 | 9 | 10 | 1 |
@@ -45,6 +47,7 @@
 ## Comparación con las cotas del enunciado
 
 | Estrategia | Medido (contador) | Cota enunciado | Diferencia |
+|---|---:|---:|---:|
 | Sin pivoteo (núcleo) | 1354 | 1486 | -8.9 % |
 | Pivoteo escalado (núcleo + sobrecosto) | 1629 | 1552 | +5.0 % |
 | Referencia teórica 2n³/3 | 1152 | 2n³/3 | solo el orden dominante |
