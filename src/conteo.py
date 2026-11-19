@@ -50,4 +50,8 @@ def comparar_con_cotas(c_sin, c_esc):
         "| Estrategia | Medido (contador) | Cota enunciado | Diferencia |",
         f"| Sin pivoteo (núcleo) | {ts['nucleo']} | {cota} | {100 * (ts['nucleo'] / cota - 1):+.1f} % |",
         f"| Pivoteo escalado (núcleo + sobrecosto) | {medido_esc} | {cota_piv} | {100 * (medido_esc / cota_piv - 1):+.1f} % |",
-        f"| Referencia teórica 2n³/3 | {2 * n ** 3 // 3} | 2n³/3 | solo el orden dominante |"])
+        f"| Referencia teórica 2n³/3 | {2 * n ** 3 // 3} | 2n³/3 | solo el orden dominante |", "",
+        f"Por qué el núcleo medido ({ts['nucleo']}) queda bajo la cota ({cota}). La diferencia es exactamente {cota - ts['nucleo']} = 2 × {bajo_diag}: "
+        f"la cota cuenta, en cada fila y paso, la multiplicación y la resta que \"actualizan\" el elemento a(i,k), que por construcción vale 0. "
+        "Aquí ese elemento se fija en 0.0 sin operar. Es trabajo evitado, no omitido: el resultado es idéntico y el conteo queda "
+        f"{100 * (1 - ts['nucleo'] / cota):.1f} % bajo la cota (dentro del ±10 % aceptado).", ""])

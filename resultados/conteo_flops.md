@@ -48,3 +48,5 @@
 | Sin pivoteo (núcleo) | 1354 | 1486 | -8.9 % |
 | Pivoteo escalado (núcleo + sobrecosto) | 1629 | 1552 | +5.0 % |
 | Referencia teórica 2n³/3 | 1152 | 2n³/3 | solo el orden dominante |
+
+Por qué el núcleo medido (1354) queda bajo la cota (1486). La diferencia es exactamente 132 = 2 × 66: la cota cuenta, en cada fila y paso, la multiplicación y la resta que "actualizan" el elemento a(i,k), que por construcción vale 0. Aquí ese elemento se fija en 0.0 sin operar. Es trabajo evitado, no omitido: el resultado es idéntico y el conteo queda 8.9 % bajo la cota (dentro del ±10 % aceptado).

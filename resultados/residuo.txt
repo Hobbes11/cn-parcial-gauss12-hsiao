@@ -1,0 +1,79 @@
+VERIFICACIÓN INDEPENDIENTE
+====================================================================================================
+
+1) Residuo r = b - A x  (aritmética racional exacta; x = solución directa del pivoteo escalado)
+
+  r[ 1] = -8.076889e-21
+  r[ 2] = -8.729114e-13
+  r[ 3] = -3.592964e-18
+  r[ 4] = 4.397029e-12
+  r[ 5] = -8.922330e-20
+  r[ 6] = 2.290876e-10
+  r[ 7] = -1.390747e-17
+  r[ 8] = 3.113764e-11
+  r[ 9] = -1.802909e-20
+  r[10] = -3.566634e-12
+  r[11] = 9.885511e-18
+  r[12] = 5.163080e-11
+
+  ||r||_inf (pivoteo escalado) = 2.290876e-10
+  residuo relativo ||r||_inf / (||A||_inf ||x||_inf) = 1.117376e-17
+  ||r||_inf (sin pivoteo)      = 1.771752e-07
+  (un residuo pequeño no garantiza un error pequeño: error ≲ κ · residuo relativo)
+
+2) Refinamiento iterativo (residuo exacto; corrección resuelta con L y U ya calculadas, sin refactorizar)
+
+  a) x guardado en doble precisión
+  paso      ||r||_inf    ||x-x*||/||x*||
+     0      2.291e-10          2.357e-13
+     1      2.603e-10          6.016e-17
+     2      2.603e-10          6.016e-17
+     3      2.603e-10          6.016e-17
+  la pasada 1 baja el error de 2.4e-13 a 6.0e-17; después se queda en el piso de almacenar x en 53 bits.
+
+  b) x guardado como racional exacto (precisión extendida)
+  paso      ||r||_inf    ||x-x*||/||x*||
+     0      2.291e-10          2.357e-13
+     1      1.366e-22          6.174e-26
+     2      3.928e-35          1.614e-38
+     3      1.383e-48          4.224e-51
+     4      5.374e-61          1.103e-63
+  cada pasada gana ~12.6 dígitos.
+
+3) Dígitos afirmados vs dígitos correctos
+  Convención: dígitos = floor(-log10(error relativo)). Los afirmados salen de la corrección del
+  refinamiento (no usan la solución exacta); los correctos se miden contra la solución racional exacta.
+
+    i  afirm. directa  correctos  afirm. refinada  correctos
+    1              13         13               20         38
+    2              12         12               20         37
+    3              10         10               20         35
+    4              11         11               20         36
+    5              12         12               20         38
+    6              10         10               20         35
+    7              12         12               20         37
+    8              11         11               20         36
+    9              12         12               20         37
+   10              12         12               20         38
+   11              11         11               20         37
+   12              12         12               20         37
+  directa: coinciden en 12 de 12 incógnitas; refinada (tope 20 = cifras de b): afirma 20-20, correctos 35-38
+
+4) Control con numpy.linalg.solve (solo control)
+
+  dígitos correctos de numpy: [13, 12, 10, 11, 12, 10, 12, 11, 12, 12, 11, 12]
+  máx diferencia relativa entre numpy y la solución propia: 7.31e-12
+
+5) Condicionamiento
+
+  ||A||_1 = 1.1089e+06;  ||A^-1||_1 estimada (Hager/Higham con L y U, sin invertir) = 4.0289e+07
+  kappa_1(A) estimada = 4.4675e+13   (control numpy.linalg.cond(A,1): 4.4675e+13)
+  kappa_2(A) = 3.0847e+13   (sigma_max = 2.258e+06, sigma_min = 7.320e-08)
+  cota kappa_2 · eps (eps = 2.22e-16) = 6.85e-03  -> dígitos garantizados: 2
+  cota kappa_1 · eps = 9.92e-03  -> dígitos garantizados: 2
+  kappa_2 con filas equilibradas (D^-1 A, D = máximo de cada fila) = 8.1323e+03
+  cota con filas equilibradas kappa_2(D^-1 A) · eps = 1.81e-12
+
+  Casi dependencia (filas escaladas por su máximo; sigma_min de D^-1 A = 4.831e-04):
+  vector singular izquierdo asociado (peso por fila F1..F12): +0.000 -0.001 -0.456 +0.000 -0.531 -0.002 +0.714 -0.000 -0.001 +0.003 -0.001 -0.000
+  F7/s7 ≈ 0.6356 · F3/s3 + 0.7412 · F5/s5, desajuste relativo = 2.28e-03

@@ -91,3 +91,34 @@ def eliminar(A0, b0, modo, traza=None):
         c["md_reg"] += 1
     return {"x": x, "U": a, "L": L, "perm": perm, "pivotes": pivotes, "escalas": s, "contador": c,
             "max_mult": max_mult, "paso_mult": paso_mult, "crecimiento": max_elem / max_a0, "bits_desp": bits_desp}
+
+def resolver_con_LU(res, rhs):
+    n = len(rhs)
+    U, L, perm = res["U"], res["L"], res["perm"]
+    y = [rhs[perm[i]] for i in range(n)]
+    for i in range(n):
+        for j in range(i):
+            y[i] -= L[i][j] * y[j]
+    z = [0.0] * n
+    for i in range(n - 1, -1, -1):
+        acc = y[i]
+        for j in range(i + 1, n):
+            acc -= U[i][j] * z[j]
+        z[i] = acc / U[i][i]
+    return z
+
+def resolver_traspuesta_con_LU(res, rhs):
+    n = len(rhs)
+    U, L, perm = res["U"], res["L"], res["perm"]
+    w = rhs[:]
+    for i in range(n):
+        for j in range(i):
+            w[i] -= U[j][i] * w[j]
+        w[i] /= U[i][i]
+    for i in range(n - 1, -1, -1):
+        for j in range(i + 1, n):
+            w[i] -= L[j][i] * w[j]
+    z = [0.0] * n
+    for i in range(n):
+        z[perm[i]] = w[i]
+    return z
